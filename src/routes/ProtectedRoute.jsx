@@ -1,5 +1,5 @@
 import AuthContext from "@/store/Auth/AuthContext";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
@@ -7,30 +7,39 @@ const ProtectedRoute = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { data } = useContext(AuthContext);
-  console.log(location.pathname);
+  const lastPath = useRef(location.pathname);
 
-  // مثال: لو المستخدم مش لوجن وحاول يفتح صفحة cart
+  // Redirect if not logged in and trying to access protected routes
   useEffect(() => {
-    if (!data && location.pathname === "/cart") {
+    const protectedRoutes = ["/cart", "/profile", "/checkout"];
+
+    if (
+      (!data || data.status === "loggedout") &&
+      protectedRoutes.includes(location.pathname)
+    ) {
       toast.error("Please login first");
       navigate("/login");
-      return null;
-    }
-    if (data && location.pathname === "/cart" && data.status === "loggedout") {
-      toast.error("Please login first");
-      navigate("/login");
-      return null;
     }
   }, [data, navigate, location]);
 
-  // مثال: لو هو لوجن وحاول يفتح صفحة login
-  if (data?.status === "loggedin") {
-    navigate("/");
+  // Prevent accessing auth pages when already logged in
+  useEffect(() => {
+    if (data?.status === "loggedin") {
+      const authRoutes = ["/login", "/register"];
 
-    toast.error("Please logout first");
+      // Only show message if directly navigating to auth pages (not from redirect)
+      if (
+        authRoutes.includes(location.pathname) &&
+        !authRoutes.includes(lastPath.current)
+      ) {
+        toast.error("You are already logged in");
+        navigate("/");
+      }
+    }
 
-    return null;
-  }
+    // Update last path
+    lastPath.current = location.pathname;
+  }, [data, navigate, location]);
 
   return children;
 };

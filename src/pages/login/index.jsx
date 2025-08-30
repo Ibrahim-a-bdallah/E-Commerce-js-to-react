@@ -51,7 +51,7 @@ const Login = () => {
       const updatedData = { ...data, status: "loggedin" }; // نسخة جديدة
       localStorage.setItem("data", JSON.stringify(updatedData));
       setData(updatedData); // تحديث بالنسخة الجديدة
-      navigate("/");
+      navigate("/", { state: { fromAuth: true } });
     } else {
       alert("Invalid email or password");
     }

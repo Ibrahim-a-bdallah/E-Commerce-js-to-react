@@ -47,8 +47,7 @@ const Register = () => {
     };
 
     localStorage.setItem("data", JSON.stringify(userData));
-
-    navigate("/login");
+    navigate("/login", { state: { fromAuth: true } });
   };
   return (
     <section className="min-h-screen flex items-center justify-center bg-blue-600">
