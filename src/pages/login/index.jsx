@@ -22,13 +22,20 @@ const Login = () => {
   const { _, setData } = useContext(AuthContext);
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-
+  const data = JSON.parse(localStorage.getItem("data"));
+  console.log(data);
   const formSchema = z.object({
-    email: z.string().email({ message: "Invalid email address." }),
+    email: z
+      .string()
+      .email({ message: "Invalid email address." })
+      .refine((val) => data && val === data.email, {
+        message: "Email not found, please register first",
+      }),
     password: z
       .string()
       .min(6, { message: "Password must be at least 6 characters." }),
   });
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -39,6 +46,7 @@ const Login = () => {
 
   const onSubmit = (values) => {
     const data = JSON.parse(localStorage.getItem("data"));
+
     if (values.email === data.email && values.password === data.password) {
       const updatedData = { ...data, status: "loggedin" }; // نسخة جديدة
       localStorage.setItem("data", JSON.stringify(updatedData));
