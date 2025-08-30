@@ -12,6 +12,7 @@ const Register = lazy(() => import("../pages/register"));
 
 import Error from "../pages/Error";
 import LoadingSpinner from "../components/feedback/lottieHandler/SuspenseHandler";
+import ProtectedRoute from "./ProtectedRoute";
 
 const router = createBrowserRouter([
   {
@@ -34,16 +35,28 @@ const router = createBrowserRouter([
 
       {
         path: "cart",
-        element: <Cart />,
+        element: (
+          <ProtectedRoute>
+            <Cart />
+          </ProtectedRoute>
+        ),
       },
 
       {
         path: "login",
-        element: <Login />,
+        element: (
+          <ProtectedRoute>
+            <Login />,
+          </ProtectedRoute>
+        ),
       },
       {
         path: "register",
-        element: <Register />,
+        element: (
+          <ProtectedRoute>
+            <Register />
+          </ProtectedRoute>
+        ),
       },
     ],
   },
