@@ -23,7 +23,7 @@ import CartContext from "@/store/cart/CartContext";
 const Home = () => {
   const { toggleFavorite, isFavorite, removeFromCart, addToCart, isCart } =
     useContext(CartContext);
-  // console.log(isCart(1));
+
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");

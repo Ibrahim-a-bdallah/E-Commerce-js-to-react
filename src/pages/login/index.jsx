@@ -23,7 +23,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const data = JSON.parse(localStorage.getItem("data"));
-  console.log(data);
+
   const formSchema = z.object({
     email: z
       .string()
