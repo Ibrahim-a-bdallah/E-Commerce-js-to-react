@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { ShoppingCart, Menu, X } from "lucide-react";
 import AuthContext from "@/store/Auth/AuthContext.js";
@@ -9,6 +9,9 @@ const Header = () => {
   const { cart, clearCart } = useContext(CartContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [cartItemsCount, setCartItemsCount] = useState(0);
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const headerRef = useRef(null);
 
   // حساب عدد المنتجات في العربة
   useEffect(() => {
@@ -23,8 +26,44 @@ const Header = () => {
     }
   }, [setData]);
 
+  // تأثير إخفاء وإظهار الهيدر عند التمرير
+  useEffect(() => {
+    const controlHeader = () => {
+      if (typeof window !== "undefined") {
+        const currentScrollY = window.scrollY;
+
+        // إذا كان المستخدم يمرر لأسفل وكان الهيدر ظاهرًا
+        if (
+          currentScrollY > lastScrollY &&
+          currentScrollY > 100 &&
+          isHeaderVisible
+        ) {
+          setIsHeaderVisible(false);
+        }
+
+        // إذا كان المستخدم يمرر لأعلى وكان الهيدر مخفيًا
+        if (currentScrollY < lastScrollY && !isHeaderVisible) {
+          setIsHeaderVisible(true);
+        }
+
+        setLastScrollY(currentScrollY);
+      }
+    };
+
+    window.addEventListener("scroll", controlHeader);
+
+    return () => {
+      window.removeEventListener("scroll", controlHeader);
+    };
+  }, [lastScrollY, isHeaderVisible]);
+
   return (
-    <header className="bg-blue-600 h-[70px] flex items-center shadow-md sticky top-0 z-50">
+    <header
+      ref={headerRef}
+      className={`bg-blue-600 h-[70px] flex items-center shadow-md fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ${
+        isHeaderVisible ? "translate-y-0" : "-translate-y-full"
+      }`}
+    >
       <div className="container mx-auto px-4 relative">
         <div className="flex items-center justify-between">
           {/* Logo */}
