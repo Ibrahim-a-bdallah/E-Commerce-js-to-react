@@ -300,7 +300,7 @@ const Home = () => {
                       onClick={() => {
                         setSelectedCategory("all");
                         setSelectedColor("all");
-                        setPriceRange([0, 1000]);
+                        setPriceRange([0, 100000]);
                         setSearchTerm("");
                       }}
                     >
